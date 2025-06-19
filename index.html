@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>🎲 Pesca una Penitenza</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Poppins:wght@300;400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background particles */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="60" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="10" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="90" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="30" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+      animation: float 20s infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-100px) rotate(360deg); }
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      color: #4c63d2;
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    h1::after {
+      content: '✨';
+      position: absolute;
+      right: -40px;
+      top: -10px;
+      animation: sparkle 2s infinite ease-in-out;
+    }
+
+    @keyframes sparkle {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.2) rotate(180deg); }
+    }
+
+    .input-group {
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 1.1em;
+      border: 3px solid #e1e8ff;
+      border-radius: 15px;
+      background: #f8faff;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4c63d2;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(76, 99, 210, 0.2);
+    }
+
+    .btn {
+      padding: 15px 35px;
+      font-size: 1.1em;
+      font-weight: 600;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      overflow: hidden;
+      margin: 10px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      opacity: 0.6;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+      color: white;
+      box-shadow: 0 8px 25px rgba(86, 171, 47, 0.3);
+    }
+
+    .btn-success:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(86, 171, 47, 0.4);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+      color: white;
+      box-shadow: 0 8px 25px rgba(255, 65, 108, 0.3);
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(255, 65, 108, 0.4);
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+      color: white;
+      box-shadow: 0 8px 25px rgba(247, 151, 30, 0.3);
+    }
+
+    .btn-warning:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(247, 151, 30, 0.4);
+    }
+
+    .player-info {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      font-weight: 600;
+      font-size: 1.2em;
+      box-shadow: 0 10px 25px rgba(245, 87, 108, 0.2);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 2em;
+      font-weight: 700;
+      color: #4c63d2;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .penitenza-card {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      padding: 25px;
+      border-radius: 20px;
+      margin: 25px 0;
+      box-shadow: 0 15px 35px rgba(252, 182, 159, 0.3);
+      animation: fadeInUp 0.5s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .penitenza-card::before {
+      content: '🎭';
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 2em;
+      opacity: 0.3;
+    }
+
+    @keyframes fadeInUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .penitenza-text {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #8b4513;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .choices {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .progress-section {
+      margin-top: 30px;
+    }
+
+    .progress-label {
+      font-weight: 600;
+      color: #4c63d2;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 25px;
+      background: #e1e8ff;
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 25px;
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(45deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
+      animation: shine 2s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .progress-green {
+      background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    }
+
+    .progress-orange {
+      background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+    }
+
+    .progress-red {
+      background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    }
+
+    .efficiency-text {
+      margin-top: 15px;
+      font-weight: 500;
+      color: #666;
+      font-size: 1.1em;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .saved-indicator {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 15px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .saved-indicator.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Confetti animation for completion */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #f39c12;
+      animation: confetti-fall 3s linear infinite;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 480px) {
+      .container {
+        padding: 25px;
+        margin: 20px;
+      }
+      
+      h1 {
+        font-size: 2em;
+      }
+      
+      .stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .choices {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎲 Pesca una Penitenza!</h1>
+
+    <div id="setup">
+      <div class="input-group">
+        <input type="text" id="nomeGiocatore" placeholder="Inserisci il tuo nome" maxlength="20">
+      </div>
+      <button class="btn btn-primary" onclick="iniziaGioco()">🚀 Inizia l'Avventura</button>
+      <div id="continua-section" class="hidden" style="margin-top: 20px;">
+        <button class="btn btn-warning" onclick="continuaGioco()">📂 Continua Partita Salvata</button>
+      </div>
+    </div>
+
+    <div id="gioco" class="hidden">
+      <div class="player-info" id="nome"></div>
+      
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number" id="accettate-num">0</div>
+          <div class="stat-label">Penitenze Accettate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="tentativi-num">0</div>
+          <div class="stat-label">Tentativi Totali</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="pescaPenitenza()" id="bottonePesca">
+        🎣 Pesca una Penitenza
+      </button>
+
+      <div id="penitenza-container" class="hidden">
+        <div class="penitenza-card">
+          <div class="penitenza-text" id="penitenza"></div>
+          <div class="choices" id="scelte">
+            <button class="btn btn-success" onclick="accettaPenitenza()">✅ Accetto la Sfida</button>
+            <button class="btn btn-danger" onclick="rifiutaPenitenza()">❌ Passo</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-label" id="progress-label">Progresso Tentativi</div>
+        <div class="progress-container">
+          <div class="progress-bar" id="barra"></div>
+        </div>
+        <div class="efficiency-text" id="efficienza"></div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <button class="btn btn-warning" onclick="resetGioco()">🔄 Ricomincia da Capo</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="saved-indicator" class="saved-indicator">💾 Progresso salvato!</div>
+
+  <script>
+    // Lista delle penitenze - per ora solo una, potrai aggiungerne altre
+    let penitenzeDisponibili = [
+      "Canta 'Volare' in mezzo al locale"
+    ];
+
+    let gameState = {
+      nome: '',
+      accettate: 0,
+      tentativi: 0,
+      penitenzaAttiva: '',
+      penitenzeUsate: []
+    };
+
+    // Funzioni per il salvataggio
+    function salvaGioco() {
+      const data = {
+        ...gameState,
+        penitenzeDisponibili: penitenzeDisponibili
+      };
+      
+      // Salva in una variabile JavaScript (persiste durante la sessione)
+      window.gameData = data;
+      
+      // Mostra indicatore di salvataggio
+      const indicator = document.getElementById('saved-indicator');
+      indicator.classList.add('show');
+      setTimeout(() => {
+        indicator.classList.remove('show');
+      }, 2000);
+    }
+
+    function caricaGioco() {
+      if (window.gameData) {
+        gameState = { ...window.gameData };
+        penitenzeDisponibili = [...window.gameData.penitenzeDisponibili];
+        return true;
+      }
+      return false;
+    }
+
+    function createConfetti() {
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = ['#ff416c', '#ff4b2b', '#667eea', '#764ba2', '#56ab2f', '#a8e6cf'][Math.floor(Math.random() * 6)];
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    function mostraGioco() {
+      document.getElementById('setup').classList.add('hidden');
+      document.getElementById('gioco').classList.remove('hidden');
+      document.getElementById('nome').textContent = `🎮 Giocatore: ${gameState.nome}`;
+      aggiornaContatori();
+      
+      // Se c'è una penitenza attiva, mostrala
+      if (gameState.penitenzaAttiva) {
+        document.getElementById('penitenza').textContent = gameState.penitenzaAttiva;
+        document.getElementById('penitenza-container').classList.remove('hidden');
+        document.getElementById('bottonePesca').disabled = true;
+      }
+    }
+
+    function iniziaGioco() {
+      const nome = document.getElementById('nomeGiocatore').value.trim();
+      if (!nome) {
+        document.getElementById('nomeGiocatore').style.borderColor = '#ff416c';
+        document.getElementById('nomeGiocatore').placeholder = '⚠️ Inserisci un nome valido!';
+        return;
+      }
+      
+      // Reset completo del gioco
+      gameState = {
+        nome: nome,
+        accettate: 0,
+        tentativi: 0,
+        penitenzaAttiva: '',
+        penitenzeUsate: []
+      };
+      
+      // Reset delle penitenze disponibili
+      penitenzeDisponibili = ["Canta 'Volare' in mezzo al locale", "Fai 5 flessioni davanti al barista",
+  "Canta 'Volare' in mezzo al locale",
+  "Fatti firmare una scarpa da uno sconosciuto",
+  "Simula una chiamata d'amore disperato con una banana",
+  "Abbraccia un palo e dichiara il tuo amore eterno",
+  "Cammina come un dinosauro per 1 minuto",
+  "Parla per 3 minuti solo in accento francese",
+  "Chiedi a uno sconosciuto se vuole sposarti (con anello finto)",
+  "Fatti truccare da un altro giocatore con oggetti casuali",
+  "Imita tre animali diversi davanti a un tavolo intero",
+  "Urla il tuo nome come se fossi in un'arena romana",
+  "Fai finta di essere un barista per 1 minuto",
+  "Balla il twist nel punto più affollato del locale",
+  "Crea un nuovo saluto segreto e insegnalo a uno sconosciuto",
+  "Simula di essere al telefono con un VIP e fai scena",
+  "Chiedi un autografo a uno sconosciuto, con convinzione",
+  "Cammina all'indietro per 1 minuto senza fermarti",
+  "Parla in rima per i prossimi 3 minuti",
+  "Fai il verso di un animale ogni volta che parli per 5 minuti",
+  "Simula una sfilata di moda con oggetti trovati nel bar",
+  "Recita la pubblicità del tuo cocktail preferito",
+  "Fai una dichiarazione d'amore esagerata a una sedia",
+  "Fingi di fare un brindisi da matrimonio, con commozione",
+  "Fai il DJ e lancia un finto pezzo, solo con la voce",
+  "Conduci un finto telegiornale goliardico",
+  "Imita una celebrità famosa e fai un appello pubblico",
+  "Fingi di piangere e chiedi un fazzoletto a un estraneo",
+  "Fai un combattimento ninja (immaginario) contro un nemico invisibile",
+  "Inventati un passo di danza e insegnalo a tutti",
+  "Urla 'Oggi mi sento potente!' come un supereroe",
+  "Fai finta di essere in un reality show e racconta un confessionale",
+  "Racconta il tuo sogno più assurdo con tono epico",
+  "Convinci qualcuno che oggi è il tuo compleanno (non lo è)",
+  "Fai il cameriere per finta, prendi ordini immaginari ai tavoli",
+  "Fingi di aver appena vinto alla lotteria e festeggia",
+  "Imita un animale scelto da un altro partecipante",
+  "Fai 3 complimenti esagerati a persone a caso",
+  "Metti in scena una rottura amorosa con una bottiglia",
+  "Fingi di essere un influencer e parla alla telecamera",
+  "Fai un annuncio pubblico come se fossi in aeroporto",
+  "Bacia la mano a 5 sconosciute (o sconosciuti) con accento francese",
+  "Chiedi a un passante di sposarti, inginocchiandoti con anello finto",
+  "Recita una poesia erotica in pubblico",
+  "Abbraccia un palo della luce e giura fedeltà eterna",
+  "Fatti firmare la pancia da almeno 5 persone",
+  "Cammina come un dinosauro per 3 minuti",
+  "Canta 'Titanic' a squarciagola con un amico",
+  "Chiedi un selfie con una coppia e prova a convincerli che tu sei il vero amore di uno dei due",
+  "Fingi di essere una statua per 5 minuti",
+  "Imita 3 animali a scelta davanti a sconosciuti",
+  "Fatti fare un cocktail con nome inventato e bevilo",
+  "Scrivi 'Mi sposo, aiutatemi!' su un cartello e giraci per 15 min",
+  "Vendi abbracci per 1 euro",
+  "Parla per 10 minuti solo in rima",
+  "Mangia qualcosa senza usare le mani",
+  "Fai una dichiarazione d'amore alla tua birra",
+  "Chiedi il numero di telefono a un nonno/a",
+  "Cammina con una banana come se fosse un telefono",
+  "Fai un brindisi solenne ogni volta che cambi locale",
+  "Sfila su un finto tappeto rosso tra gli amici urlanti",
+  "Racconta una bugia spudorata a un estraneo",
+  "Fatti scrivere sulla schiena una dedica volgare (ma affettuosa)",
+  "Fatti impacchettare con la pellicola trasparente",
+  "Convinci qualcuno a cantarti una serenata",
+  "Indossa un reggiseno sopra la maglietta",
+  "Fai lo spogliarello (casto) su un muretto",
+  "Inventa una canzone e cantala come fosse un successo mondiale",
+  "Fatti truccare dagli amici con colori esagerati",
+  "Parla come un robot per 5 minuti",
+  "Simula un'intervista in cui racconti la tua 'carriera da attore'"];
+      
+      salvaGioco();
+      mostraGioco();
+    }
+
+    function continuaGioco() {
+      if (caricaGioco()) {
+        mostraGioco();
+      } else {
+        alert('❌ Nessuna partita salvata trovata!');
+      }
+    }
+
+    function resetGioco() {
+      if (confirm('🤔 Sei sicuro di voler ricominciare da capo? Perderai tutti i progressi!')) {
+        // Reset completo
+        gameState = {
+          nome: '',
+          accettate: 0,
+          tentativi: 0,
+          penitenzaAttiva: '',
+          penitenzeUsate: []
+        };
+        
+        penitenzeDisponibili = ["Canta 'Volare' in mezzo al locale","Fai 5 flessioni davanti al barista",
+  "Canta 'Volare' in mezzo al locale",
+  "Fatti firmare una scarpa da uno sconosciuto",
+  "Simula una chiamata d'amore disperato con una banana",
+  "Abbraccia un palo e dichiara il tuo amore eterno",
+  "Cammina come un dinosauro per 1 minuto",
+  "Parla per 3 minuti solo in accento francese",
+  "Chiedi a uno sconosciuto se vuole sposarti (con anello finto)",
+  "Fatti truccare da un altro giocatore con oggetti casuali",
+  "Imita tre animali diversi davanti a un tavolo intero",
+  "Urla il tuo nome come se fossi in un'arena romana",
+  "Fai finta di essere un barista per 1 minuto",
+  "Balla il twist nel punto più affollato del locale",
+  "Crea un nuovo saluto segreto e insegnalo a uno sconosciuto",
+  "Simula di essere al telefono con un VIP e fai scena",
+  "Chiedi un autografo a uno sconosciuto, con convinzione",
+  "Cammina all'indietro per 1 minuto senza fermarti",
+  "Parla in rima per i prossimi 3 minuti",
+  "Fai il verso di un animale ogni volta che parli per 5 minuti",
+  "Simula una sfilata di moda con oggetti trovati nel bar",
+  "Recita la pubblicità del tuo cocktail preferito",
+  "Fai una dichiarazione d'amore esagerata a una sedia",
+  "Fingi di fare un brindisi da matrimonio, con commozione",
+  "Fai il DJ e lancia un finto pezzo, solo con la voce",
+  "Conduci un finto telegiornale goliardico",
+  "Imita una celebrità famosa e fai un appello pubblico",
+  "Fingi di piangere e chiedi un fazzoletto a un estraneo",
+  "Fai un combattimento ninja (immaginario) contro un nemico invisibile",
+  "Inventati un passo di danza e insegnalo a tutti",
+  "Urla 'Oggi mi sento potente!' come un supereroe",
+  "Fai finta di essere in un reality show e racconta un confessionale",
+  "Racconta il tuo sogno più assurdo con tono epico",
+  "Convinci qualcuno che oggi è il tuo compleanno (non lo è)",
+  "Fai il cameriere per finta, prendi ordini immaginari ai tavoli",
+  "Fingi di aver appena vinto alla lotteria e festeggia",
+  "Imita un animale scelto da un altro partecipante",
+  "Fai 3 complimenti esagerati a persone a caso",
+  "Metti in scena una rottura amorosa con una bottiglia",
+  "Fingi di essere un influencer e parla alla telecamera",
+  "Fai un annuncio pubblico come se fossi in aeroporto",
+  "Bacia la mano a 5 sconosciute (o sconosciuti) con accento francese",
+  "Chiedi a un passante di sposarti, inginocchiandoti con anello finto",
+  "Recita una poesia erotica in pubblico",
+  "Abbraccia un palo della luce e giura fedeltà eterna",
+  "Fatti firmare la pancia da almeno 5 persone",
+  "Cammina come un dinosauro per 3 minuti",
+  "Canta 'Titanic' a squarciagola con un amico",
+  "Chiedi un selfie con una coppia e prova a convincerli che tu sei il vero amore di uno dei due",
+  "Fingi di essere una statua per 5 minuti",
+  "Imita 3 animali a scelta davanti a sconosciuti",
+  "Fatti fare un cocktail con nome inventato e bevilo",
+  "Scrivi 'Mi sposo, aiutatemi!' su un cartello e giraci per 15 min",
+  "Vendi abbracci per 1 euro",
+  "Parla per 10 minuti solo in rima",
+  "Mangia qualcosa senza usare le mani",
+  "Fai una dichiarazione d'amore alla tua birra",
+  "Chiedi il numero di telefono a un nonno/a",
+  "Cammina con una banana come se fosse un telefono",
+  "Fai un brindisi solenne ogni volta che cambi locale",
+  "Sfila su un finto tappeto rosso tra gli amici urlanti",
+  "Racconta una bugia spudorata a un estraneo",
+  "Fatti scrivere sulla schiena una dedica volgare (ma affettuosa)",
+  "Fatti impacchettare con la pellicola trasparente",
+  "Convinci qualcuno a cantarti una serenata",
+  "Indossa un reggiseno sopra la maglietta",
+  "Fai lo spogliarello (casto) su un muretto",
+  "Inventa una canzone e cantala come fosse un successo mondiale",
+  "Fatti truccare dagli amici con colori esagerati",
+  "Parla come un robot per 5 minuti",
+  "Simula un'intervista in cui racconti la tua 'carriera da attore'"];
+        window.gameData = null;
+        
+        document.getElementById('gioco').classList.add('hidden');
+        document.getElementById('setup').classList.remove('hidden');
+        document.getElementById('nomeGiocatore').value = '';
+        document.getElementById('penitenza-container').classList.add('hidden');
+        document.getElementById('bottonePesca').disabled = false;
+      }
+    }
+
+    function aggiornaContatori() {
+      document.getElementById('accettate-num').textContent = gameState.accettate;
+      document.getElementById('tentativi-num').textContent = gameState.tentativi;
+      aggiornaBarra();
+      salvaGioco();
+    }
+
+    function aggiornaBarra() {
+      const barra = document.getElementById('barra');
+      const efficienza = document.getElementById('efficienza');
+      const percentuale = (gameState.tentativi / 50) * 100;
+      
+      barra.style.width = percentuale + '%';
+      
+      if (percentuale < 30) {
+        barra.className = 'progress-bar progress-green';
+      } else if (percentuale < 60) {
+        barra.className = 'progress-bar progress-orange';
+      } else {
+        barra.className = 'progress-bar progress-red';
+      }
+      
+      efficienza.textContent = `🎯 Efficienza: ${gameState.accettate}/10 penitenze completate in ${gameState.tentativi}/50 tentativi`;
+    }
+
+    function pescaPenitenza() {
+      if (gameState.tentativi >= 50 || gameState.accettate >= 10) {
+        alert("🏁 Hai raggiunto il limite massimo!");
+        return;
+      }
+      if (penitenzeDisponibili.length === 0) {
+        alert("🎣 Nessuna altra penitenza disponibile!");
+        return;
+      }
+      if (gameState.penitenzaAttiva !== '') {
+        alert("⏳ Devi prima accettare o rifiutare la penitenza corrente!");
+        return;
+      }
+      
+      const index = Math.floor(Math.random() * penitenzeDisponibili.length);
+      gameState.penitenzaAttiva = penitenzeDisponibili.splice(index, 1)[0];
+      
+      document.getElementById('penitenza').textContent = gameState.penitenzaAttiva;
+      document.getElementById('penitenza-container').classList.remove('hidden');
+      document.getElementById('bottonePesca').disabled = true;
+      
+      salvaGioco();
+    }
+
+    function accettaPenitenza() {
+      gameState.tentativi++;
+      gameState.accettate++;
+      gameState.penitenzeUsate.push(gameState.penitenzaAttiva);
+      gameState.penitenzaAttiva = '';
+      
+      document.getElementById('penitenza-container').classList.add('hidden');
+      document.getElementById('bottonePesca').disabled = false;
+      
+      aggiornaContatori();
+      
+      if (gameState.accettate >= 10) {
+        createConfetti();
+        setTimeout(() => {
+          alert(`🎉 INCREDIBILE ${gameState.nome.toUpperCase()}! 🎉\n\nHai completato tutte le 10 penitenze in ${gameState.tentativi} tentativi!\n\n${gameState.tentativi <= 15 ? '🏆 LEGGENDA!' : gameState.tentativi <= 25 ? '🥇 CAMPIONE!' : gameState.tentativi <= 35 ? '🥈 BRAVO!' : '🥉 COMPLETATO!'}`);
+        }, 500);
+      }
+    }
+
+    function rifiutaPenitenza() {
+      gameState.tentativi++;
+      gameState.penitenzaAttiva = '';
+      
+      document.getElementById('penitenza-container').classList.add('hidden');
+      document.getElementById('bottonePesca').disabled = false;
+      
+      aggiornaContatori();
+    }
+
+    // Inizializzazione al caricamento della pagina
+    window.addEventListener('load', function() {
+      if (caricaGioco() && gameState.nome) {
+        document.getElementById('continua-section').classList.remove('hidden');
+      }
+    });
+
+    // Enter key support
+    document.getElementById('nomeGiocatore').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        iniziaGioco();
+      }
+    });
+
+    // Auto-salvataggio ogni 30 secondi se il gioco è attivo
+    setInterval(() => {
+      if (gameState.nome && !document.getElementById('gioco').classList.contains('hidden')) {
+        salvaGioco();
+      }
+    }, 30000);
+  </script>
+</body>
+</html>
